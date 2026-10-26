@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecisionHub - Random Picker & İzleme Listesi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header & Menü -->
+    <header>
+        <div class="navbar">
+            <div class="logo">DecisionHub</div>
+            <nav>
+                <ul>
+                    <li><a onclick="switchPage('home')" class="nav-link active" id="link-home">Ana Sayfa</a></li>
+                    <li><a onclick="switchPage('list')" class="nav-link" id="link-list">Arşiv Listesi</a></li>
+                    <li><a onclick="switchPage('add')" class="nav-link" id="link-add">Öğe Ekle</a></li>
+                    <li><a onclick="switchPage('contact')" class="nav-link" id="link-contact">İletişim</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Ana İçerik Alanı -->
+    <main>
+        <!-- 1. SAYFA: ANA SAYFA & RANDOM PICKER -->
+        <section id="page-home" class="page active">
+            <h2>Karar Verici Asistanı</h2>
+            <div class="dashboard-grid">
+                <div class="card picker-box">
+                    <h3>Ne İzlesem / Çalışsam?</h3>
+                    <p style="color: #64748b; margin-top: 0.5rem;">Listendeki öğelerden rastgele seçim yap!</p>
+                    <div class="result-display" id="randomResult">Henüz seçim yapılmadı</div>
+                    <button onclick="pickRandomItem()">Rastgele Seç</button>
+                </div>
+                <div class="card">
+                    <h3>Hızlı İstatistikler</h3>
+                    <p style="margin-top: 1rem; font-size: 1.1rem;">Toplam Kayıtlı Öğe: <strong id="statTotal">0</strong></p>
+                    <p style="margin-top: 0.5rem; font-size: 1.1rem;">Tamamlananlar: <strong id="statCompleted">0</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SAYFA: ARŞİV LİSTESİ VE TABLO -->
+        <section id="page-list" class="page">
+            <h2>İçerik Arşivi</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Kategori</th>
+                            <th>Tür</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemTableBody">
+                        <!-- JavaScript ile doldurulacak -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. SAYFA: ÖĞE EKLEME (CRUD & FORM VALIDATION) -->
+        <section id="page-add" class="page">
+            <h2>Yeni İçerik Ekle</h2>
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <form id="addItemForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="itemTitle">Başlık / Adı</label>
+                        <input type="text" id="itemTitle" placeholder="Örn: Inception veya Binary Search">
+                        <div class="error-msg" id="titleError">Bu alan boş bırakılamaz!</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemCategory">Kategori</label>
+                        <select id="itemCategory">
+                            <option value="">Seçiniz...</option>
+                            <option value="Film / Dizi">Film / Dizi</option>
+                            <option value="Kod Cümleciği">Kod Cümleciği</option>
+                            <option value="Kitap">Kitap</option>
+                        </select>
+                        <div class="error-msg" id="categoryError">Lütfen bir kategori seçin!</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemStatus">Durum</label>
+                        <select id="itemStatus">
+                            <option value="İzlenecek / Çalışılacak">İzlenecek / Çalışılacak</option>
+                            <option value="Tamamlandı">Tamamlandı</option>
+                        </select>
+                    </div>
+                    <button type="submit">Listeye Ekle</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. SAYFA: İLETİŞİM / ÖNERİ FORMU -->
+        <section id="page-contact" class="page">
+            <h2>İletişim & Öneri</h2>
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <form onsubmit="handleContactSubmit(event)">
+                    <div class="form-group">
+                        <label for="contactName">Adınız Soyadınız</label>
+                        <input type="text" id="contactName" placeholder="Ad Soyad">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMessage">Öneri veya Mesajınız</label>
+                        <textarea id="contactMessage" rows="4" placeholder="Eklenmesini istediğin özellikler..."></textarea>
+                    </div>
+                    <button type="submit">Gönder</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 DecisionHub - Ağ Tabanlı Programlamaya Giriş Dönem Projesi</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
