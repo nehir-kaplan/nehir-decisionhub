@@ -1,149 +1,192 @@
-// Sayfa Değiştirme Fonksiyonu
-function switchPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    
-    document.getElementById('page-' + pageId).classList.add('active');
-    document.getElementById('link-' + pageId).classList.add('active');
+const STORAGE_KEY = "decisionhub_watchlist_v1";
 
-    if (pageId === 'list') {
-        renderTable();
-    }
-    if (pageId === 'home') {
-        updateStats();
-    }
-}
+// İlk açılışta arşivin boş görünmemesi için örnek veriler
+const defaultItems = [
+  { id: 1, title: "Interstellar", category: "Film", status: "Bekliyor" },
+  { id: 2, title: "Dark", category: "Dizi", status: "Tamamlandı" },
+  { id: 3, title: "Clean Code - Robert C. Martin", category: "Kitap", status: "Bekliyor" },
+  { id: 4, title: "Multithreaded Socket Server (C)", category: "Kod", status: "Bekliyor" }
+];
 
-// LocalStorage Veri Yönetimi
 function getItems() {
-    let items = localStorage.getItem('decisionHubItems');
-    if (!items) {
-        // Varsayılan başlangıç verileri
-        items = [
-            { id: 1, title: 'Interstellar', category: 'Film / Dizi', status: 'İzlenecek / Çalışılacak' },
-            { id: 2, title: 'QuickSort Algoritması', category: 'Kod Cümleciği', status: 'Tamamlandı' }
-        ];
-        localStorage.setItem('decisionHubItems', JSON.stringify(items));
-    } else {
-        items = JSON.parse(items);
-    }
-    return items;
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (!data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultItems));
+    return defaultItems;
+  }
+  return JSON.parse(data);
 }
 
 function saveItems(items) {
-    localStorage.setItem('decisionHubItems', JSON.stringify(items));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
-// Tabloyu Güncelleme
-function renderTable() {
-    const items = getItems();
-    const tbody = document.getElementById('itemTableBody');
-    tbody.innerHTML = '';
+// Sayfa yüklendiğinde ilgili sayfanın fonksiyonlarını çalıştır
+document.addEventListener("DOMContentLoaded", () => {
+  updateHomeStats();
+  renderArchiveTable();
+  renderStatsPage();
+  setupAddForm();
+  setupContactForm();
+});
 
-    if (items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Henüz kayıt eklenmemiş.</td></tr>';
-        return;
-    }
+// --- 1. ANA SAYFA: İSTATİSTİK & RANDOM PICKER ---
+function updateHomeStats() {
+  const totalEl = document.getElementById("homeTotalCount");
+  if (!totalEl) return;
 
-    items.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.title}</td>
-            <td>${item.category}</td>
-            <td>${item.category === 'Kod Cümleciği' ? 'Kod' : 'Medya'}</td>
-            <td>${item.status}</td>
-            <td><button class="btn-danger" onclick="deleteItem(${item.id})">Sil</button></td>
-        `;
-        tbody.appendChild(tr);
-    });
+  const items = getItems();
+  const pending = items.filter(i => i.status === "Bekliyor").length;
+  const done = items.filter(i => i.status === "Tamamlandı").length;
+
+  totalEl.textContent = items.length;
+  document.getElementById("homePendingCount").textContent = pending;
+  document.getElementById("homeDoneCount").textContent = done;
 }
 
-// Öğe Silme (CRUD - Delete)
-function deleteItem(id) {
-    let items = getItems();
-    items = items.filter(i => i.id !== id);
+function pickRandomItem() {
+  const category = document.getElementById("pickerCategory").value;
+  const items = getItems().filter(i => i.status === "Bekliyor");
+  const filtered = category === "ALL" ? items : items.filter(i => i.category === category);
+
+  const resultBox = document.getElementById("pickerResult");
+  const badge = document.getElementById("pickedCategoryBadge");
+  const title = document.getElementById("pickedTitle");
+
+  if (filtered.length === 0) {
+    badge.textContent = "Uyarı";
+    title.textContent = "Bu kategoride bekleyen öğe bulunamadı!";
+    resultBox.style.display = "block";
+    return;
+  }
+
+  const chosen = filtered[Math.floor(Math.random() * filtered.length)];
+  badge.textContent = chosen.category;
+  title.textContent = `🎯 ${chosen.title}`;
+  resultBox.style.display = "block";
+}
+
+// --- 2. ARŞİV SAYFASI (READ, UPDATE, DELETE) ---
+function renderArchiveTable() {
+  const tbody = document.getElementById("archiveTableBody");
+  if (!tbody) return;
+
+  const items = getItems();
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Henüz kayıtlı içerik yok.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td><strong>${item.title}</strong></td>
+      <td><span class="badge">${item.category}</span></td>
+      <td>
+        <span class="badge ${item.status === 'Tamamlandı' ? 'badge-done' : 'badge-pending'}">
+          ${item.status}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-success btn-sm" onclick="toggleStatus(${item.id})">Durum Değiştir</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Sil</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function toggleStatus(id) {
+  const items = getItems();
+  const target = items.find(i => i.id === id);
+  if (target) {
+    target.status = target.status === "Bekliyor" ? "Tamamlandı" : "Bekliyor";
     saveItems(items);
-    renderTable();
-    updateStats();
+    renderArchiveTable();
+  }
 }
 
-// Form Gönderme ve Validasyon (CRUD - Create)
-function handleFormSubmit(event) {
-    event.preventDefault();
-    
-    const titleInput = document.getElementById('itemTitle');
-    const categorySelect = document.getElementById('itemCategory');
-    const statusSelect = document.getElementById('itemStatus');
-    
-    const titleError = document.getElementById('titleError');
-    const categoryError = document.getElementById('categoryError');
-    
+function deleteItem(id) {
+  const items = getItems().filter(i => i.id !== id);
+  saveItems(items);
+  renderArchiveTable();
+}
+
+// --- 3. ÖĞE EKLEME FORMU & VALIDATION (CREATE) ---
+function setupAddForm() {
+  const form = document.getElementById("addItemForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("itemTitle").value.trim();
+    const category = document.getElementById("itemCategory").value;
+    const status = document.getElementById("itemStatus").value;
+
     let isValid = true;
+    document.getElementById("titleError").style.display = title.length < 2 ? "block" : "none";
+    if (title.length < 2) isValid = false;
 
-    // JavaScript Validasyon Kuralları
-    if (titleInput.value.trim() === '') {
-        titleError.style.display = 'block';
-        isValid = false;
-    } else {
-        titleError.style.display = 'none';
-    }
-
-    if (categorySelect.value === '') {
-        categoryError.style.display = 'block';
-        isValid = false;
-    } else {
-        categoryError.style.display = 'none';
-    }
+    document.getElementById("categoryError").style.display = category === "" ? "block" : "none";
+    if (category === "") isValid = false;
 
     if (!isValid) return;
 
-    // Yeni öğeyi localStorage'a ekleme
     const items = getItems();
-    const newItem = {
-        id: Date.now(),
-        title: titleInput.value.trim(),
-        category: categorySelect.value,
-        status: statusSelect.value
-    };
-
-    items.push(newItem);
+    items.unshift({ id: Date.now(), title, category, status });
     saveItems(items);
-
-    // Formu temizle ve listeye yönlendir
-    titleInput.value = '';
-    categorySelect.value = '';
-    alert('İçerik başarıyla eklendi!');
-    switchPage('list');
+    window.location.href = "archive.html";
+  });
 }
 
-// Rastgele Seçici (Random Picker)
-function pickRandomItem() {
-    const items = getItems();
-    const resultDisplay = document.getElementById('randomResult');
-    
-    if (items.length === 0) {
-        resultDisplay.textContent = 'Önce listeye öğe eklemelisin!';
-        return;
-    }
+// --- 4. İSTATİSTİKLER SAYFASI ---
+function renderStatsPage() {
+  const grid = document.getElementById("statsGrid");
+  if (!grid) return;
 
-    const randomIndex = Math.floor(Math.random() * items.length);
-    resultDisplay.textContent = items[randomIndex].title + ' (' + items[randomIndex].category + ')';
+  const items = getItems();
+  const categories = ["Film", "Dizi", "Kitap", "Kod"];
+
+  grid.innerHTML = categories.map(cat => {
+    const catItems = items.filter(i => i.category === cat);
+    const done = catItems.filter(i => i.status === "Tamamlandı").length;
+    return `
+      <div class="card">
+        <h3>${cat} Kategorisi</h3>
+        <p style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin: 0.5rem 0;">
+          Toplam: ${catItems.length} Kayıt
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Tamamlanan: ${done} | Bekleyen: ${catItems.length - done}
+        </p>
+      </div>
+    `;
+  }).join("");
 }
 
-// İstatistikleri Güncelle
-function updateStats() {
-    const items = getItems();
-    document.getElementById('statTotal').textContent = items.length;
-    const completed = items.filter(i => i.status === 'Tamamlandı').length;
-    document.getElementById('statCompleted').textContent = completed;
-}
+// --- 5. İLETİŞİM FORMU & VALIDATION ---
+function setupContactForm() {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
 
-// İletişim Formu
-function handleContactSubmit(event) {
-    event.preventDefault();
-    alert('Mesajınız başarıyla alındı. Teşekkürler!');
-    event.target.reset();
-}
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("senderName").value.trim();
+    const email = document.getElementById("senderEmail").value.trim();
+    const message = document.getElementById("senderMessage").value.trim();
 
-// Sayfa açıldığında istatistikleri yükle
-updateStats();
+    let isValid = true;
+    document.getElementById("nameError").style.display = name.length < 2 ? "block" : "none";
+    if (name.length < 2) isValid = false;
+
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    document.getElementById("emailError").style.display = !emailValid ? "block" : "none";
+    if (!emailValid) isValid = false;
+
+    document.getElementById("messageError").style.display = message.length < 10 ? "block" : "none";
+    if (message.length < 10) isValid = false;
+
+    if (!isValid) return;
+
+    form.reset();
+    document.getElementById("contactSuccess").style.display = "block";
+  });
+}

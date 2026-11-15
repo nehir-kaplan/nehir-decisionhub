@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecisionHub | İletişim</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">DecisionHub</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Ana Sayfa</a></li>
+        <li><a href="archive.html">Arşiv Listesi</a></li>
+        <li><a href="add.html">Öğe Ekle</a></li>
+        <li><a href="stats.html">İstatistikler</a></li>
+        <li><a href="contact.html" class="active">İletişim</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+      <h2>✉️ Öneri ve Geri Bildirim</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.25rem;">Proje hakkında görüş ve önerilerinizi iletebilirsiniz[cite: 1].</p>
+
+      <form id="contactForm" novalidate>
+        <div class="form-group">
+          <label for="senderName">Adınız Soyadınız *</label>
+          <input type="text" id="senderName" placeholder="Adınız Soyadınız">
+          <span class="error-msg" id="nameError">Lütfen adınızı girin.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="senderEmail">E-posta Adresiniz *</label>
+          <input type="email" id="senderEmail" placeholder="ornek@ogrenci.ankara.edu.tr">
+          <span class="error-msg" id="emailError">Geçerli bir e-posta adresi girin.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="senderMessage">Mesajınız *</label>
+          <textarea id="senderMessage" rows="4" placeholder="Öneri veya geri bildiriminiz..."></textarea>
+          <span class="error-msg" id="messageError">Mesaj en az 10 karakter olmalıdır.</span>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">Gönder</button>
+      </form>
+      <div id="contactSuccess" style="display: none; margin-top: 1rem; padding: 1rem; background: #d1fae5; color: #065f46; border-radius: 8px; text-align: center;">
+        Mesajınız başarıyla alındı! Teşekkür ederiz.
+      </div>
+    </div>
+  </main>
+
+  <footer>DecisionHub &copy; 2026 - Nehir Kaplan</footer>
+  <script src="script.js"></script>
+</body>
+</html>

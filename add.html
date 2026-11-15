@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecisionHub | Öğe Ekle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">DecisionHub</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Ana Sayfa</a></li>
+        <li><a href="archive.html">Arşiv Listesi</a></li>
+        <li><a href="add.html" class="active">Öğe Ekle</a></li>
+        <li><a href="stats.html">İstatistikler</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+      <h2>➕ Yeni İçerik Ekle</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.25rem;">İzleme veya çalışma listenize yeni bir kayıt ekleyin.</p>
+
+      <form id="addItemForm" novalidate>
+        <div class="form-group">
+          <label for="itemTitle">İçerik Başlığı *</label>
+          <input type="text" id="itemTitle" placeholder="Örn: Inception, Clean Code, C Socket Sunucusu...">
+          <span class="error-msg" id="titleError">Başlık en az 2 karakter olmalıdır.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="itemCategory">Kategori *</label>
+          <select id="itemCategory">
+            <option value="">Kategori Seçiniz...</option>
+            <option value="Film">Film</option>
+            <option value="Dizi">Dizi</option>
+            <option value="Kitap">Kitap</option>
+            <option value="Kod">Kod Parçacığı / Çalışma</option>
+          </select>
+          <span class="error-msg" id="categoryError">Lütfen bir kategori seçin.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="itemStatus">Durum</label>
+          <select id="itemStatus">
+            <option value="Bekliyor">İzlenecek / Çalışılacak</option>
+            <option value="Tamamlandı">İzlendi / Tamamlandı</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">Listeye Kaydet</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>DecisionHub &copy; 2026 - Nehir Kaplan</footer>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecisionHub | Arşiv Listesi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">DecisionHub</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Ana Sayfa</a></li>
+        <li><a href="archive.html" class="active">Arşiv Listesi</a></li>
+        <li><a href="add.html">Öğe Ekle</a></li>
+        <li><a href="stats.html">İstatistikler</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2>📚 İzleme & Çalışma Arşivi</h2>
+          <p style="color: var(--text-muted);">Kayıtlı tüm öğelerinizi yönetebilir, durumlarını güncelleyebilir veya silebilirsiniz.</p>
+        </div>
+        <a href="add.html" class="btn">+ Yeni Öğe Ekle</a>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Başlık</th>
+              <th>Kategori</th>
+              <th>Durum</th>
+              <th>İşlemler</th>
+            </tr>
+          </thead>
+          <tbody id="archiveTableBody">
+            <!-- JS ile doldurulacak -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>DecisionHub &copy; 2026 - Nehir Kaplan</footer>
+  <script src="script.js"></script>
+</body>
+</html>
