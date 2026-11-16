@@ -22,18 +22,34 @@
 
   <main>
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
         <div>
-          <h2>📚 İzleme & Çalışma Arşivi</h2>
-          <p style="color: var(--text-muted);">Kayıtlı tüm öğelerinizi yönetebilir, durumlarını güncelleyebilir veya silebilirsiniz.</p>
+          <h2> İzleme & Çalışma Arşivi</h2>
+          <p style="color: var(--text-muted);">localStorage üzerinde kayıtlı içeriklerinizi kategoriye göre filtreleyip yönetebilirsiniz.</p>
         </div>
-        <a href="add.html" class="btn">+ Yeni Öğe Ekle</a>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm" style="background: #64748b;" onclick="resetSampleData()">Örnek Verileri Yükle</button>
+          <a href="add.html" class="btn btn-sm">+ Yeni Öğe Ekle</a>
+        </div>
+      </div>
+
+      <!-- Kategori Filtreleme Barı -->
+      <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+        <label for="archiveCategoryFilter" style="margin-bottom: 0;">Kategoriye Göre Filtrele:</label>
+        <select id="archiveCategoryFilter" onchange="renderArchiveTable()" style="width: auto; min-width: 180px;">
+          <option value="ALL">Tüm Kategoriler</option>
+          <option value="Film">Film</option>
+          <option value="Dizi">Dizi</option>
+          <option value="Kitap">Kitap</option>
+          <option value="Kod">Kod Parçacığı / Çalışma</option>
+        </select>
       </div>
 
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
+              <th>#</th>
               <th>Başlık</th>
               <th>Kategori</th>
               <th>Durum</th>
@@ -41,14 +57,14 @@
             </tr>
           </thead>
           <tbody id="archiveTableBody">
-            <!-- JS ile doldurulacak -->
+            <!-- JS ile localStorage'dan okunup doldurulacak -->
           </tbody>
         </table>
       </div>
     </div>
   </main>
 
-  <footer>DecisionHub &copy; 2026 - Nehir Kaplan</footer>
+  <footer>DecisionHub &copy; 2026 - Nehir Kaplan (23291722)</footer>
   <script src="script.js"></script>
 </body>
 </html>

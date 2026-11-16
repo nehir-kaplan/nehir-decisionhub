@@ -1,13 +1,15 @@
 const STORAGE_KEY = "decisionhub_watchlist_v1";
 
-// İlk açılışta arşivin boş görünmemesi için örnek veriler
+// 4. Hafta: Başlangıç örnek verileri
 const defaultItems = [
   { id: 1, title: "Interstellar", category: "Film", status: "Bekliyor" },
   { id: 2, title: "Dark", category: "Dizi", status: "Tamamlandı" },
   { id: 3, title: "Clean Code - Robert C. Martin", category: "Kitap", status: "Bekliyor" },
-  { id: 4, title: "Multithreaded Socket Server (C)", category: "Kod", status: "Bekliyor" }
+  { id: 4, title: "Multithreaded Socket Server (C)", category: "Kod", status: "Bekliyor" },
+  { id: 5, title: "Mr. Robot", category: "Dizi", status: "Bekliyor" }
 ];
 
+// localStorage Okuma (Read) Fonksiyonu
 function getItems() {
   const data = localStorage.getItem(STORAGE_KEY);
   if (!data) {
@@ -19,6 +21,20 @@ function getItems() {
 
 function saveItems(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+// Mevcut verileri silmeden örnek verileri üzerine ekleme
+function resetSampleData() {
+  const currentItems = getItems();
+  const newSamples = defaultItems.map((item, idx) => ({
+    ...item,
+    id: Date.now() + idx
+  }));
+  const merged = [...newSamples, ...currentItems];
+  saveItems(merged);
+  renderArchiveTable();
+  updateHomeStats();
+  renderStatsPage();
 }
 
 // Sayfa yüklendiğinde ilgili sayfanın fonksiyonlarını çalıştır
@@ -62,23 +78,31 @@ function pickRandomItem() {
 
   const chosen = filtered[Math.floor(Math.random() * filtered.length)];
   badge.textContent = chosen.category;
-  title.textContent = `🎯 ${chosen.title}`;
+  title.textContent = ` ${chosen.title}`;
   resultBox.style.display = "block";
 }
 
-// --- 2. ARŞİV SAYFASI (READ, UPDATE, DELETE) ---
+// --- 2. ARŞİV SAYFASI (4. HAFTA: READ & FİLTRELEME) ---
 function renderArchiveTable() {
   const tbody = document.getElementById("archiveTableBody");
   if (!tbody) return;
 
-  const items = getItems();
+  const filterSelect = document.getElementById("archiveCategoryFilter");
+  const selectedCategory = filterSelect ? filterSelect.value : "ALL";
+
+  let items = getItems();
+  if (selectedCategory !== "ALL") {
+    items = items.filter(item => item.category === selectedCategory);
+  }
+
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Henüz kayıtlı içerik yok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Bu kategoride kayıtlı içerik bulunamadı.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = items.map(item => `
+  tbody.innerHTML = items.map((item, index) => `
     <tr>
+      <td>${index + 1}</td>
       <td><strong>${item.title}</strong></td>
       <td><span class="badge">${item.category}</span></td>
       <td>
